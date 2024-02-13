@@ -1,0 +1,146 @@
+<link href="<?= base_url(); ?>/assets/plugins/select2/dist/css/select2.min.css" rel="stylesheet" type="text/css" />
+<div id="modaltaskidrajal" class="modal fade" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false" aria-labelledby="warning-header-modalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header modal-colored-header bg-warning">
+
+                <h4 class="modal-title text-white" id="warning-header-modalLabel">Update Task ID JKN Mobile</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            </div>
+            <?php helper('form'); ?>
+            <?= form_open('WsAntrean/SimpanUpdateTaskID', ['class' => 'formperawat']); ?>
+            <?= csrf_field(); ?>
+            <div class="modal-body">
+                <from class="validation-wizard wizard-circle updatedatanik" id="form-update-nik" method="post">
+                    <div class="form-body">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label class="control-label">Kode Boking</label>
+                                    <input type="text" id="kodeboking" autocomplete="off" name="kodeboking" class="form-control" value="<?= $kodeboking; ?>">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!--/span-->
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label class="control-label">Keterangan</label>
+                                    <select name="taskid" id="taskid" class="select2" style="width: 100%">
+                                        <option value="">Pilih Task ID</option>
+                                        <?php foreach ($statustaskid as $task) : ?>
+                                            <option value="<?= $task['code']; ?>" class="select-classroom" <?php if ($task['code'] == $posisitaskid) { ?> selected="selected" <?php } ?>><?= $task['name']; ?> [<?= $task['code']; ?>]</option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label class="control-label">Waktu</label>
+                                    <input type="text" id="waktu" autocomplete="off" name="waktu" class="form-control" value="<?= $milisecond; ?>">
+                                </div>
+                            </div>
+                        </div>
+                        <!--/span-->
+                    </div>
+
+            </div>
+            </from>
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-primary btnsimpan"><i class="fa fa-check"></i> Simpan</button>
+
+                <button type="button" class="btn btn-default waves-effect" data-dismiss="modal"> <i class="fa fa-home"></i> Kembali</button>
+            </div>
+            <?= form_close() ?>
+
+        </div>
+
+    </div><!-- /.modal-content -->
+</div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+
+
+<script>
+    function hanyaAngka(event) {
+        var angka = (event.which) ? event.which : event.keyCode
+        if (angka != 46 && angka > 31 && (angka < 48 || angka > 57))
+            return false;
+        return true;
+    }
+</script>
+
+<script src="<?= base_url(); ?>/assets/plugins/select2/dist/js/select2.full.min.js" type="text/javascript"></script>
+<script>
+    $(function() {
+        // Switchery
+        $(".select2").select2();
+
+        $(".ajax").select2({
+            ajax: {
+                url: "https://api.github.com/search/repositories",
+                dataType: 'json',
+                delay: 250,
+                data: function(params) {
+                    return {
+                        q: params.term, // search term
+                        page: params.page
+                    };
+                },
+                processResults: function(data, params) {
+                    // parse the results into the format expected by Select2
+                    // since we are using custom formatting functions we do not need to
+                    // alter the remote JSON data, except to indicate that infinite
+                    // scrolling can be used
+                    params.page = params.page || 1;
+                    return {
+                        results: data.items,
+                        pagination: {
+                            more: (params.page * 30) < data.total_count
+                        }
+                    };
+                },
+                cache: true
+            },
+            escapeMarkup: function(markup) {
+                return markup;
+            }, // let our custom formatter work
+            minimumInputLength: 1,
+            //templateResult: formatRepo, // omitted for brevity, see the source of this page
+            //templateSelection: formatRepoSelection // omitted for brevity, see the source of this page
+        });
+    });
+</script>
+
+
+<script>
+    $(document).ready(function() {
+        $('.formperawat').submit(function(e) {
+            e.preventDefault();
+
+            $.ajax({
+                type: "post",
+                url: $(this).attr('action'),
+                data: $(this).serialize(),
+                dataType: "json",
+
+                complete: function() {
+                    $('.btnsimpan').removeAttr('disable');
+                    $('.btnsimpan').html('Simpan Update HFIS');
+                },
+                success: function(response) {
+                    Swal.fire({
+                        html: 'Pesan: ' + response.pesan,
+                        icon: 'success',
+                        timer: 5000
+                    });
+
+                }
+            });
+            return false;
+        });
+    });
+</script>
